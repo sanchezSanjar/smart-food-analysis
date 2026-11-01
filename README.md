@@ -1,6 +1,7 @@
 # Smart Food Analysis
 
-Take a photo of a meal and find out **how healthy it is**. The app recognises the dish with a
+Take a photo of a meal and find out **how healthy it is**. Built with older adults and their
+caregivers in mind. The app recognises the dish with a
 Vision Transformer running on your GPU, gives it an **A–E health grade** (Nutri-Score method),
 shows the nutrients for your portion against daily values, suggests **healthier swaps**, and keeps
 a simple **meal diary** for the day. Everything runs locally and offline after setup.
@@ -12,6 +13,28 @@ a simple **meal diary** for the day. Everything runs locally and offline after s
 > that is not on the list, will still be matched to the closest of the 101 dishes, so the result
 > can be wrong. When the model's confidence is below 50%, the app shows a warning and the top 3
 > guesses so you can pick the right dish.
+
+## For older adults and caregivers
+
+Smart Food Analysis is meant to help **older adults** (and the family members or caregivers who
+support them) check everyday meals without reading nutrition labels or typing anything:
+
+- **Photo instead of typing**: take or upload one photo; the dish is recognised automatically.
+- **One clear answer**: a large coloured letter from **A** (very healthy) to **E** (treat food),
+  plus a short reason such as "high in salt" or "good protein".
+- **Watch salt, sugar and saturated fat**: these nutrients, which matter for blood pressure,
+  diabetes and heart health, are shown in **red** when one portion uses a large part of the day.
+- **Simple better choices**: up to three healthier dishes of a similar kind are suggested.
+- **A daily overview** a caregiver can check: meals eaten today, calories and the average grade.
+- **Private and offline**: everything runs on the home PC; photos are never uploaded.
+- **Easy start**: double-click `SmartFood.exe`; no commands are needed.
+
+Tips for easier use: press **Ctrl** and **+** in the browser to make text larger, set the
+**daily calorie target** in the sidebar to the amount a doctor or dietitian recommends, and
+photograph one dish at a time from above in good light.
+
+> This app gives general information only. People with diabetes, kidney or heart disease, or a
+> special diet should follow the advice of their doctor or dietitian.
 
 ## Features
 
