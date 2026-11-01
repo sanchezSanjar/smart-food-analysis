@@ -17,3 +17,7 @@ data/raw/
 # Runtime files
 meal_history.csv
 smartfood.log
+smartfood.port
+
+# Local test images
+static/
