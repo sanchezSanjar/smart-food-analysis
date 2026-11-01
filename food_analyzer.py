@@ -1,50 +1,63 @@
+"""Food recognition (Food-101 classifier) combined with nutrition and health grade."""
+from dataclasses import dataclass
 from functools import lru_cache
-from transformers import pipeline
+from pathlib import Path
 
-MODEL_NAME = "nateraw/food"
+from nutrition import Food, get_food
 
-# Illustrative values per 100 g for demonstration only.
-# They are not a verified nutrition database and may not match the uploaded meal.
-NUTRITION_PER_100G = {
-    "pizza": {"calories": 266, "protein_g": 11, "carbs_g": 33, "fat_g": 10},
-    "hamburger": {"calories": 295, "protein_g": 17, "carbs_g": 24, "fat_g": 14},
-    "salad": {"calories": 80, "protein_g": 3, "carbs_g": 10, "fat_g": 4},
-    "sushi": {"calories": 150, "protein_g": 6, "carbs_g": 28, "fat_g": 1},
-    "soup": {"calories": 70, "protein_g": 3, "carbs_g": 9, "fat_g": 2},
-    "fried_rice": {"calories": 174, "protein_g": 4, "carbs_g": 25, "fat_g": 6},
-    "steak": {"calories": 271, "protein_g": 26, "carbs_g": 0, "fat_g": 19},
-    "grilled_salmon": {"calories": 206, "protein_g": 22, "carbs_g": 0, "fat_g": 12},
-    "apple_pie": {"calories": 237, "protein_g": 2, "carbs_g": 34, "fat_g": 11},
-    "ice_cream": {"calories": 207, "protein_g": 4, "carbs_g": 24, "fat_g": 11},
-}
-DEFAULT_NUTRITION = {"calories": 160, "protein_g": 7, "carbs_g": 20, "fat_g": 6}
+MODEL_ID = "nateraw/food"
+MODEL_DIR = Path(__file__).resolve().parent / "models" / "food"
+LOW_CONFIDENCE = 0.5  # below this the photo may show a food the model does not know
+
+
+@dataclass
+class Guess:
+    food: Food
+    confidence: float
+
+
+@dataclass
+class Analysis:
+    guesses: list  # best first
+    grams: int
+
+    @property
+    def best(self):
+        return self.guesses[0]
+
+    @property
+    def is_uncertain(self):
+        return self.best.confidence < LOW_CONFIDENCE
 
 
 @lru_cache(maxsize=1)
-def _classifier():
-    return pipeline("image-classification", model=MODEL_NAME)
+def classifier():
+    """Image classifier on the GPU when available; loads from models/food when downloaded."""
+    import torch
+    from transformers import pipeline
+
+    local = (MODEL_DIR / "config.json").exists()
+    return pipeline(
+        "image-classification",
+        model=str(MODEL_DIR) if local else MODEL_ID,
+        device=0 if torch.cuda.is_available() else -1,
+    )
 
 
-def analyze_food(image, serving_grams=250):
-    predictions = _classifier()(image)
+def device_name():
+    import torch
+    return torch.cuda.get_device_name(0) if torch.cuda.is_available() else "CPU"
+
+
+def analyze_food(image, serving_grams=250, top_k=3):
+    predictions = classifier()(image.convert("RGB"), top_k=top_k)
     if not predictions:
         raise RuntimeError("The model returned no predictions.")
-
-    top = predictions[0]
-    label = top["label"].strip().lower().replace(" ", "_")
-    base = NUTRITION_PER_100G.get(label, DEFAULT_NUTRITION)
-    factor = serving_grams / 100
-    nutrition = {
-        key: round(value * factor) if key == "calories" else round(value * factor, 1)
-        for key, value in base.items()
-    }
-    if label in NUTRITION_PER_100G:
-        note = "Nutrition is a rough illustrative estimate based on the predicted category and serving slider."
-    else:
-        note = "No category-specific example was available; generic illustrative values are shown. Check a reliable nutrition source for real estimates."
-    return {
-        "label": top["label"],
-        "confidence": float(top["score"]),
-        "nutrition": nutrition,
-        "note": note,
-    }
+    guesses = []
+    for prediction in predictions:
+        food = get_food(prediction["label"])
+        if food is not None:
+            guesses.append(Guess(food, float(prediction["score"])))
+    if not guesses:
+        raise RuntimeError(f"No nutrition data for {predictions[0]['label']!r}.")
+    return Analysis(guesses, serving_grams)
