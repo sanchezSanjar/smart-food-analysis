@@ -5,7 +5,8 @@ Download the CSV zip from https://fdc.nal.usda.gov/download-datasets and unzip i
 
 Each dish maps to one FNDDS food, or to a weighted mix when no single entry fits
 (e.g. fish and chips = fried cod + restaurant fries). The fruit/vegetable/legume share is an
-estimate per dish, needed by the Nutri-Score; USDA does not publish it.
+estimate per dish (potatoes excluded, as in Nutri-Score), needed by the Nutri-Score; USDA does
+not publish it.
 
 Run:  .venv\\Scripts\\python.exe scripts\\build_nutrition.py
 """
@@ -28,7 +29,7 @@ FOODS = {
     "baklava": ("dessert", 0, [("Baklava", 1)]),
     "beef_carpaccio": ("main", 5, [("Steak tartare", 1)]),
     "beef_tartare": ("main", 5, [("Steak tartare", 1)]),
-    "beet_salad": ("salad", 75, [("Beets, fresh, cooked, no added fat", 0.75), ("Cheese, Feta", 0.15), ("Olive oil", 0.10)]),
+    "beet_salad": ("salad", 75, [("Beets, fresh, cooked, no added fat", 0.79), ("Cheese, Feta", 0.15), ("Olive oil", 0.06)]),
     "beignets": ("dessert", 0, [("Beignet", 1)]),
     "bibimbap": ("main", 35, [("Bibimbap, Korean", 1)]),
     "bread_pudding": ("dessert", 0, [("Pudding, bread", 1)]),
@@ -36,7 +37,7 @@ FOODS = {
     "bruschetta": ("snack", 40, [("Bruschetta", 1)]),
     "caesar_salad": ("salad", 60, [("Caesar salad, with romaine, no dressing", 0.85), ("Caesar dressing", 0.15)]),
     "cannoli": ("dessert", 0, [("Cheese, Ricotta", 0.45), ("Churros", 0.55)]),
-    "caprese_salad": ("salad", 55, [("Tomatoes, raw", 0.55), ("Cheese, Mozzarella, NFS", 0.38), ("Olive oil", 0.07)]),
+    "caprese_salad": ("salad", 55, [("Tomatoes, raw", 0.57), ("Cheese, Mozzarella, NFS", 0.38), ("Olive oil", 0.05)]),
     "carrot_cake": ("dessert", 10, [("Cake or cupcake, carrot", 1)]),
     "ceviche": ("seafood", 30, [("Ceviche", 1)]),
     "cheese_plate": ("snack", 0, [("Cheese, NFS", 1)]),
@@ -71,7 +72,7 @@ FOODS = {
     "frozen_yogurt": ("dessert", 0, [("Frozen yogurt, vanilla", 1)]),
     "garlic_bread": ("snack", 0, [("Garlic bread, NFS", 1)]),
     "gnocchi": ("main", 0, [("Gnocchi, potato", 1)]),
-    "greek_salad": ("salad", 80, [("Greek Salad, no dressing", 0.88), ("Olive oil", 0.12)]),
+    "greek_salad": ("salad", 80, [("Greek Salad, no dressing", 0.94), ("Olive oil", 0.06)]),
     "grilled_cheese_sandwich": ("sandwich", 0, [("Grilled cheese sandwich, NFS", 1)]),
     "grilled_salmon": ("seafood", 0, [("Fish, salmon, grilled", 1)]),
     "guacamole": ("snack", 95, [("Guacamole, NFS", 1)]),
